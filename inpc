@@ -1,0 +1,35 @@
+class IPC {
+    int data;
+    boolean ready = false;
+
+    synchronized void send(int x) throws Exception {
+        while (ready) wait();
+        data = x;
+        ready = true;
+        System.out.println("Sent: " + x);
+        notify();
+    }
+
+    synchronized void receive() throws Exception {
+        while (!ready) wait();
+        System.out.println("Received: " + data);
+        ready = false;
+        notify();
+    }
+
+    public static void main(String[] args) {
+        IPC obj = new IPC();
+
+        new Thread(() -> {
+            try {
+                for (int i = 1; i <= 5; i++) obj.send(i);
+            } catch (Exception e) {}
+        }).start();
+
+        new Thread(() -> {
+            try {
+                for (int i = 1; i <= 5; i++) obj.receive();
+            } catch (Exception e) {}
+        }).start();
+    }
+}
