@@ -1,0 +1,35 @@
+import java.util.*;
+class Exp {
+    public static void main(String[] args) {
+        int n = 5;
+        boolean[] active = {true,true,true,true,false}; // Process 4 fails
+        int start = 2;
+        System.out.println("Number of processes: " + n);
+        System.out.println("Process no 4 fails");
+        System.out.println("Election initiated by Process " + start);
+        int max = start;
+        int i = start;
+        do {
+            int next = (i + 1) % n;
+            if (active[next]) {
+                System.out.println("Process " + i + " passes Election(" + i + ") to Process " + next);
+                max = Math.max(max, next);
+                i = next;
+            } else {
+                i = next; // skip failed
+            }
+        } while (i != start);
+        System.out.println("Process " + max + " becomes coordinator");
+        i = max;
+        do {
+            int next = (i + 1) % n;
+            if (active[next]) {
+                System.out.println("Process " + i + " passes Coordinator(" + max + ") message to Process " + next);
+                i = next;
+            } else {
+                i = next;
+            }
+        } while (i != max);
+        System.out.println("End of Election");
+    }
+}
