@@ -1,0 +1,33 @@
+class Process {
+    int clock;
+    String name;
+    Process(String name) {
+        this.name = name;
+        clock = 0;
+    }
+    void internalEvent() {
+        clock++;
+        System.out.println(name + " performs internal event. Clock: " + clock);
+    }
+    int sendMessage() {
+        clock++;
+        System.out.println(name + " sends message. Clock: " + clock);
+        return clock;
+    }
+    void receiveMessage(int msgClock) {
+        clock = Math.max(clock, msgClock) + 1;
+        System.out.println(name + " receives message. Clock: " + clock);
+    }
+}
+public class Exp {
+    public static void main(String[] args) {
+        Process p1 = new Process("Process 1");
+        Process p2 = new Process("Process 2");
+        p1.internalEvent();
+        p1.internalEvent();
+        int msg = p1.sendMessage();
+        p2.internalEvent();
+        p2.receiveMessage(msg);
+        p2.sendMessage();
+    }
+}
