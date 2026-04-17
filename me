@@ -1,32 +1,34 @@
-import java.util.*;
-
 class Exp {
-    @SuppressWarnings("unchecked")
-    static List<Integer>[] g = new ArrayList[4];
+    static int n = 5;
+    static boolean[] request = new boolean[n];
+    static int[] clock = new int[n];
 
-    static void probe(int init, int sender, int curr) {
-        System.out.println("Probe(" + init + ", " + sender + ", " + curr + ")");
+    static synchronized void criticalSection(int pid) {
+        request[pid] = true;
+        clock[pid]++;
 
-        if (curr == init) {
-            System.out.println("DEADLOCK DETECTED");
-            return;
+        for (int j = 0; j < n; j++) {
+            if (j != pid && request[j] && clock[j] < clock[pid]) {
+                return; // wait
+            }
         }
 
-        for (int next : g[curr])
-            probe(init, curr, next);
+        System.out.println("Process " + pid + " enters critical section at " + clock[pid]);
+
+        try { Thread.sleep(500); } catch(Exception e) {}
+
+        System.out.println("Process " + pid + " exits critical section");
+
+        request[pid] = false;
     }
 
     public static void main(String[] args) {
 
-        for (int i = 0; i < 4; i++) g[i] = new ArrayList<>();
-
-        g[0].add(1);
-        g[1].add(2);
-        g[2].add(3);
-        g[3].add(0);
-
-        int start = 0;
-        for (int next : g[start])
-            probe(start, start, next);
+        for (int i = 0; i < n; i++) {
+            int pid = i;
+            new Thread(() -> {
+                criticalSection(pid);
+            }).start();
+        }
     }
 }
