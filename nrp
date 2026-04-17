@@ -1,0 +1,24 @@
+import java.net.*;
+import java.util.*;
+
+public class Exp {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter hostname: ");
+        String url = sc.nextLine();
+
+        try {
+            InetAddress ip = InetAddress.getByName(url);
+
+            System.out.println("Hostname: " + url);
+            System.out.println("IP: " + ip.getHostAddress());
+
+        } catch (Exception e) {
+            System.out.println("Unable to get hostname and IP");
+        }
+
+        sc.close();
+    }
+}
