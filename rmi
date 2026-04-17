@@ -1,0 +1,46 @@
+//Client code
+import java.net.*; 
+import java.io.*; 
+import java.util.*;
+
+class Client {
+    public static void main(String[] args) throws Exception {
+        Socket s = new Socket("localhost", 5000);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+        PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter message: ");
+        String msg = sc.nextLine();
+
+        out.println(msg);
+        System.out.println("Server: " + in.readLine());
+
+        s.close();
+        sc.close();
+    }
+}
+
+//Server code
+import java.net.*; 
+import java.io.*;
+
+class Server {
+    public static void main(String[] args) throws Exception {
+        ServerSocket ss = new ServerSocket(5000);
+        System.out.println("Server running...");
+
+        Socket s = ss.accept();
+        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+        PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+
+        String msg = in.readLine();
+        System.out.println("Client: " + msg);
+
+        out.println("Message received");
+
+        s.close();
+        ss.close();
+    }
+}
