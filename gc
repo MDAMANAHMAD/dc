@@ -1,0 +1,63 @@
+//client code
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.Scanner;
+
+class Client {
+    public static void main(String[] args) throws Exception {
+
+        DatagramSocket socket = new DatagramSocket();
+        InetAddress group = InetAddress.getByName("230.0.0.1");
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter your name: ");
+        String name = sc.nextLine();
+
+        System.out.println("Start chatting (type 'exit' to stop):");
+
+        while (true) {
+            String msg = sc.nextLine();
+            if (msg.equals("exit")) break;
+
+            // add username
+            String message = "[" + name + "]: " + msg;
+
+            byte[] data = message.getBytes();
+            DatagramPacket packet = new DatagramPacket(data, data.length, group, 4446);
+
+            socket.send(packet);
+        }
+
+        socket.close();
+        sc.close();
+    }
+}
+
+//server code
+
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+
+class Server {
+    public static void main(String[] args) throws Exception {
+
+        MulticastSocket socket = new MulticastSocket(4446);
+        InetAddress group = InetAddress.getByName("230.0.0.1");
+
+        socket.joinGroup(group);
+
+        System.out.println("Receiver started...");
+
+        while (true) {
+            byte[] buf = new byte[1024];
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+
+            socket.receive(packet);
+
+            String msg = new String(packet.getData(), 0, packet.getLength());
+            System.out.println(msg);
+        }
+    }
+}
